@@ -1,8 +1,6 @@
 import {
   Controller,
-  Param,
   Patch,
-  Post,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,21 +15,8 @@ export class DocumentController {
   constructor(private doumentService: DocumentService) {}
 
   @UseInterceptors(UploadDocInLocalInterceptor)
-  @Post('society/:userid')
-  uploadfile(
-    @Param('userid') userid: any,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    console.log(file, '>>');
-
-    return this.doumentService.createDocumentInLocal(userid, file);
-  }
-  @UseInterceptors(UploadDocInLocalInterceptor)
   @Patch('society/:userid')
-  async updateuploadfile(
-    @Param('userid') userid: any,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  async updateuploadfile(@UploadedFile() file: Express.Multer.File) {
     console.log(file, '>>');
     const formData = new FormData();
     formData.append('resume', fs.createReadStream(file.path));
@@ -62,6 +47,6 @@ export class DocumentController {
       })
       .catch(console.error);
 
-    return this.doumentService.updateDocument(userid, file);
+    return this.doumentService.updateDocument(file);
   }
 }
