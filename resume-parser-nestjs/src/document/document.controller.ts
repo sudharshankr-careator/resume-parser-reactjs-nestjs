@@ -15,13 +15,13 @@ export class DocumentController {
   constructor(private doumentService: DocumentService) {}
 
   @UseInterceptors(UploadDocInLocalInterceptor)
-  @Patch('society/:userid')
+  @Patch('society')
   async updateuploadfile(@UploadedFile() file: Express.Multer.File) {
     console.log(file, '>>');
     const formData = new FormData();
     formData.append('resume', fs.createReadStream(file.path));
 
-    await fetch('https://jobs.lever.co/parseResume', {
+    return await fetch('https://jobs.lever.co/parseResume', {
       method: 'POST',
       headers: {
         Origin: 'https://jobs.lever.co',
@@ -44,9 +44,8 @@ export class DocumentController {
           '🚀 ~ file: document.controller.ts ~ line 52 ~ DocumentController ~ .then ~ response',
           response,
         );
+        return response;
       })
       .catch(console.error);
-
-    return this.doumentService.updateDocument(file);
   }
 }

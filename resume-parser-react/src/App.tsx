@@ -1,12 +1,26 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, Upload } from "antd";
+import axios from "axios";
 import React, { useState } from "react";
 import "./App.css";
-import ADMIN_SERVICE from "./services/AdminService";
-
+import CONSTANTS from "./contants";
 function App() {
   const [file, setFile] = useState("");
-
+  const [data, setData] = useState<any>({});
+  const UPLOAD_DOCUMENT = async (docfile: any) => {
+    const url = `${CONSTANTS.DATABASE_URL}/document/society`;
+    try {
+      const data = await axios.patch(url, docfile);
+      console.log(
+        "🚀 ~ file: App.tsx ~ line 16 ~ constUPLOAD_DOCUMENT= ~ data",
+        data.data
+      );
+      setData(data.data);
+      return data;
+    } catch (e) {
+      console.log(e);
+    }
+  };
   function onChange(e: any) {
     setFile(e.file);
     const formdata = new FormData();
@@ -29,16 +43,7 @@ function App() {
           console.log(componentsData.file, "ggg");
 
           data.append("docfile", componentsData.file);
-          await ADMIN_SERVICE.UPLOAD_DOCUMENT(data, "1")
-            .then((data) => {
-              console.log("🚀 ~ file: App.tsx ~ line 32 ~ .then ~ data", data);
-            })
-            .catch((e) => {
-              console.log(
-                "🚀 ~ file: App.tsx ~ line 36 ~ customRequest={ ~ e",
-                e
-              );
-            });
+          await UPLOAD_DOCUMENT(data);
         }}
         maxCount={1}
         showUploadList={{
@@ -49,6 +54,27 @@ function App() {
       >
         <Button icon={<UploadOutlined />}>Upload</Button>
       </Upload>
+      {Object.keys(data).length === 0 ? (
+        console.log(data, "ll")
+      ) : (
+        <div>
+          <h1>
+            {" "}
+            <strong>Name:</strong>
+            {data.names.length !== 0 && data.names[0]}
+          </h1>
+          <h2>
+            {" "}
+            <strong>Email:</strong>
+            {data.emails.length !== 0 && data.emails[0].value}{" "}
+          </h2>
+          <h4>
+            {" "}
+            <strong>Skill:</strong>
+            {data.summary.skills}
+          </h4>
+        </div>
+      )}
     </div>
   );
 }
