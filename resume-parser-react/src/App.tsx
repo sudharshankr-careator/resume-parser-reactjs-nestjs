@@ -2,8 +2,11 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Upload } from "antd";
 import axios from "axios";
 import React, { useState } from "react";
+import { Rings } from "react-loader-spinner";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import "./App.css";
 import CONSTANTS from "./contants";
+
 function App() {
   const [file, setFile] = useState("");
   const [data, setData] = useState<any>({});
@@ -23,6 +26,7 @@ function App() {
   };
   function onChange(e: any) {
     setFile(e.file);
+    setData({});
     const formdata = new FormData();
     formdata.append("docfile", e.file);
 
@@ -55,21 +59,27 @@ function App() {
         <Button icon={<UploadOutlined />}>Upload</Button>
       </Upload>
       {Object.keys(data).length === 0 ? (
-        console.log(data, "ll")
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "2rem",
+          }}
+        >
+          <Rings color="#00BFFF" height={100} width={100} />
+        </div>
       ) : (
         <div>
           <h1>
-            {" "}
             <strong>Name:</strong>
             {data.names.length !== 0 && data.names[0]}
           </h1>
           <h2>
-            {" "}
             <strong>Email:</strong>
             {data.emails.length !== 0 && data.emails[0].value}{" "}
           </h2>
           <h4>
-            {" "}
             <strong>Skill:</strong>
             {data.summary.skills}
           </h4>
